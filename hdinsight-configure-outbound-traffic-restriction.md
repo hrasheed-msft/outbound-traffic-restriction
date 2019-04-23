@@ -30,116 +30,61 @@ a.	If you are using an ESP cluster, then you must also select Microsoft.AzureAct
 4.	From the Azure Firewall UI > Rules > Application rule collection, select Add application rule collection. Provide a name, priority, and set Allow. In the FQDN tags section, provide a name, set the source addresses to * and select the HDInsight and the Windows Update FQDN Tags.
 
 
-[[5.[     
-]]][![Title: Add application
-rule](DataExfilteration_files/image006.png)][]
+![Title: Add application rule](DataExfilteration_files/image006.png)
 
 6.	From the Azure Firewall UI > Rules > Network rule collection, select Add network rule collection. Provide a name, priority and set Allow. In the Rules section, provide a name, select Any, set * to Source and Destination addresses, and set the ports to 123. This rule allows the system to perform clock sync using NTP. 
 
-[[7.[     
-]]][![Title: Add NTP network
-rule](DataExfilteration_files/image008.png)][]
+![Title: Add NTP network rule](DataExfilteration_files/image008.png)]
 
 8.	Create a route table with the management addresses from this document with a next hop of Internet. The route table entries are required to avoid asymmetric routing problems. Add routes for these IP address dependencies in the IP address dependencies with a next hop of Internet. Add a Virtual Appliance route to your route table for 0.0.0.0/0 with the next hop being your Azure Firewall private IP address.
 
-[[9.[     
-]]][![Title: Creating a route
-table](DataExfilteration_files/image010.png)][]
+![Title: Creating a route table](DataExfilteration_files/image010.png)]
 
-[[10.[ 
-]]][Assign the route table you created to
-your HDInsight
-subnet.][]
+Assign the route table you created to your HDInsight subnet.
 
-#### [Deploying HDInsight behind a firewall]
+## Deploying HDInsight behind a firewall
 
-[The steps to deploy a cluster behind a firewall are the same as
-configuring your existing HDInsight cluster with an Azure Firewall
-except you will need to create your HDInsight subnet and then follow the
-previous steps.]
+The steps to deploy a cluster behind a firewall are the same as configuring your existing HDInsight cluster with an Azure Firewall except you will need to create your HDInsight subnet and then follow the previous steps.
 
-[Edge node applications traffic]
---------------------------------------------------------------------------------------------------
+### Edge node applications traffic
 
-[The above steps will allow the cluster to operate without issues. You
-still need to configure dependencies to accommodate your custom
-applications running on the edge nodes, if
-applicable.]
 
-[[·[        
-]]][Application dependencies must be
-identified and added to the Azure Firewall or the route
-table.][]
+The above steps will allow the cluster to operate without issues. You still need to configure dependencies to accommodate your custom applications running on the edge nodes, if applicable.
 
-[[·[        
-]]][Routes must be created for the
-application traffic to avoid asymmetric routing
-issues][]
+Application dependencies must be identified and added to the Azure Firewall or the route table.
 
-[If your applications have other dependencies, they need to be added to
-your Azure Firewall. Create Application rules to allow HTTP/HTTPS
-traffic and Network rules for everything
-else.]
+Routes must be created for the application traffic to avoid asymmetric routing issues
+
+If your applications have other dependencies, they need to be added to your Azure Firewall. Create Application rules to allow HTTP/HTTPS traffic and Network rules for everything else.
 
  
 
-[Logging]
----------------------------------------------------------------------------
+### Logging
 
-[Azure Firewall can send logs to Azure Storage, Event Hub, or Azure
-Monitor logs. To integrate your app with any supported destination, go
-to the Azure Firewall portal \> Diagnostic Logs and enable the logs for
-your desired destination. If you integrate with Azure Monitor logs, then
-you can see logging for any traffic sent to Azure Firewall. To see the
-traffic that is being denied, open your Log Analytics workspace portal
-\> Logs and enter a query
-like]
+Azure Firewall can send logs to Azure Storage, Event Hub, or Azure Monitor logs. To integrate your app with any supported destination, go to the Azure Firewall portal \> Diagnostic Logs and enable the logs for your desired destination. If you integrate with Azure Monitor logs, then you can see logging for any traffic sent to Azure Firewall. To see the traffic that is being denied, open your Log Analytics workspace portal \> Logs and enter a query like
 
 [Copy]
 
-[AzureDiagnostics \| where msg\_s contains \"Deny\" \| where
-TimeGenerated \>=
-ago(1h)]
+AzureDiagnostics \| where msg\_s contains \"Deny\" \| where TimeGenerated \>= ago(1h)
 
-[Integrating your Azure Firewall with Azure Monitor logs is very useful
-when first getting an application working when you are not aware of all
-of the application dependencies. You can learn more about Azure Monitor
-logs from ][[Analyze log
-data in Azure
-Monitor]](https://docs.microsoft.com/azure/azure-monitor/log-query/log-query-overview)
+Integrating your Azure Firewall with Azure Monitor logs is very useful when first getting an application working when you are not aware of all of the application dependencies. You can learn more about Azure Monitor logs from [Analyze log data in Azure Monitor](https://docs.microsoft.com/azure/azure-monitor/log-query/log-query-overview)
 
-[Dependencies]
---------------------------------------------------------------------------------
+### Dependencies
 
-[The following information is only required if you wish to configure a
-firewall appliance other than Azure
-Firewall.]
+The following information is only required if you wish to configure a firewall appliance other than Azure Firewall.
 
-[[·[        
-]]][Service Endpoint capable services
-should be configured with service
-endpoints.][]
+Service Endpoint capable services should be configured with service endpoints.
 
-[[·[        
-]]][IP Address dependencies are for
-non-HTTP/S traffic (both TCP and UDP
-traffic)][]
+IP Address dependencies are for non-HTTP/S traffic (both TCP and UDP traffic)
 
-[[·[        
-]]][FQDN HTTP/HTTPS endpoints can be
-placed in your firewall
-device.][]
+FQDN HTTP/HTTPS endpoints can be placed in your firewall device.
 
-[[·[        
-]]][Wildcard HTTP/HTTPS endpoints are
-dependencies that can vary with your ASE based on a number of
-qualifiers.][]
+Wildcard HTTP/HTTPS endpoints are dependencies that can vary with your ASE based on a number of qualifiers.
 
-[[·[        
-]]][Linux dependencies are only a
+Linux dependencies are only a
 concern if you are deploying Linux apps into your ASE. If you are not
 deploying Linux apps into your ASE, then these addresses do not need to
-be added to your firewall.][]10.	Assign the route table you created to your HDInsight subnet.
+be added to your firewall.10.	Assign the route table you created to your HDInsight subnet.
 Deploying HDInsight behind a firewall
 The steps to deploy a cluster behind a firewall are the same as configuring your existing HDInsight cluster with an Azure Firewall except you will need to create your HDInsight subnet and then follow the previous steps.
 Edge node applications traffic
@@ -162,7 +107,7 @@ The following information is only required if you wish to configure a firewall a
 •	Linux dependencies are only a concern if you are deploying Linux apps into your ASE. If you are not deploying Linux apps into your ASE, then these addresses do not need to be added to your firewall.
 
 
-#### [Service Endpoint capable dependencies]
+#### Service Endpoint capable dependencies
 
 +-----------------------------------------------------------------------+
 | **Endpoint**                                                          |
@@ -172,7 +117,7 @@ The following information is only required if you wish to configure a firewall a
 | Azure Storage                                                         |
 +-----------------------------------------------------------------------+
 
-#### [IP Address dependencies]
+#### IP Address dependencies
 
 +-----------------------------------+-----------------------------------+
 | **Endpoint**                      | **Details**                       |
@@ -191,11 +136,9 @@ The following information is only required if you wish to configure a firewall a
 | l-network#hdinsight-ip)           |                                   |
 +-----------------------------------+-----------------------------------+
 
-[With an Azure Firewall, you automatically get everything below
-configured with the FQDN
-tags.]
+With an Azure Firewall, you automatically get everything below configured with the FQDN tags.
 
-#### [FQDN HTTP/HTTPS dependencies][[[\[OM2\]](#_msocom_2){#_anchor_2 .msocomanchor}[ ]]]{.MsoCommentReference}
+#### FQDN HTTP/HTTPS dependencies
 
 +-----------------------------------------------------------------------+
 | **Endpoint**                                                          |
@@ -309,7 +252,7 @@ tags.]
 | azureprofileruploads5.blob.core.windows.net:443                       |
 +-----------------------------------------------------------------------+
 
-#### [Wildcard HTTP/HTTPS dependencies]
+#### Wildcard HTTP/HTTPS dependencies
 
 +-----------------------------------------------------------------------+
 | **Endpoint**                                                          |
@@ -323,7 +266,7 @@ tags.]
 | \*.windowsupdate.microsoft.com:443                                    |
 +-----------------------------------------------------------------------+
 
-#### [Linux dependencies]
+#### Linux dependencies
 
 +-----------------------------------------------------------------------+
 | **Endpoint**                                                          |
