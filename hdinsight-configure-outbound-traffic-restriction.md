@@ -16,7 +16,7 @@ There are several inbound dependencies. The inbound management traffic cannot be
 The HDInsight outbound dependencies are almost entirely defined with FQDNs, which do not have static IP addresses behind them. The lack of static addresses means that Network Security Groups (NSGs) cannot be used to lock down the outbound traffic from a cluster. The addresses change often enough that one cannot set up rules based on the current resolution and use that to setup NSG rules.
 The solution to securing outbound addresses lies in use of a firewall device that can control outbound traffic based on domain names. Azure Firewall can restrict outbound HTTP and HTTPS traffic based on the FQDN of the destination.
 
-![Title: ASE with Azure Firewall connection flow](DataExfilteration_files/image002.png)
+![Title: ASE with Azure Firewall connection flow](hdinsight-configure-outbound-traffic-restriction/image002.png)
 
 Configuring Azure Firewall with HDInsight
 The steps to lock down egress from your existing HDInsight with Azure Firewall are:
@@ -24,21 +24,21 @@ The steps to lock down egress from your existing HDInsight with Azure Firewall a
 a.	If you are using an ESP cluster, then you must also select Microsoft.AzureActiveDirectory service endpoint.
 
 
-![Title: select service endpoints](DataExfilteration_files/image004.png)
+![Title: select service endpoints](hdinsight-configure-outbound-traffic-restriction/image004.png)
 
 3.	Create a subnet named AzureFirewallSubnet in the VNet where your cluster exists. Follow the instructions in the Azure Firewall documentation to create your Azure Firewall.
 4.	From the Azure Firewall UI > Rules > Application rule collection, select Add application rule collection. Provide a name, priority, and set Allow. In the FQDN tags section, provide a name, set the source addresses to * and select the HDInsight and the Windows Update FQDN Tags.
 
 
-![Title: Add application rule](DataExfilteration_files/image006.png)
+![Title: Add application rule](hdinsight-configure-outbound-traffic-restriction/image006.png)
 
 6.	From the Azure Firewall UI > Rules > Network rule collection, select Add network rule collection. Provide a name, priority and set Allow. In the Rules section, provide a name, select Any, set * to Source and Destination addresses, and set the ports to 123. This rule allows the system to perform clock sync using NTP. 
 
-![Title: Add NTP network rule](DataExfilteration_files/image008.png)]
+![Title: Add NTP network rule](hdinsight-configure-outbound-traffic-restriction/image008.png)]
 
 8.	Create a route table with the management addresses from this document with a next hop of Internet. The route table entries are required to avoid asymmetric routing problems. Add routes for these IP address dependencies in the IP address dependencies with a next hop of Internet. Add a Virtual Appliance route to your route table for 0.0.0.0/0 with the next hop being your Azure Firewall private IP address.
 
-![Title: Creating a route table](DataExfilteration_files/image010.png)]
+![Title: Creating a route table](hdinsight-configure-outbound-traffic-restriction/image010.png)]
 
 Assign the route table you created to your HDInsight subnet.
 
